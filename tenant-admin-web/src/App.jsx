@@ -1,8 +1,10 @@
 import React from 'react';
+import { TerminologyProvider } from './context/TerminologyContext';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <TerminologyProvider>
+      <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r hidden md:block shadow-sm">
         <div className="p-6">
@@ -84,6 +86,7 @@ function App() {
         </div>
       </main>
     </div>
+    </TerminologyProvider>
   );
 }
 
