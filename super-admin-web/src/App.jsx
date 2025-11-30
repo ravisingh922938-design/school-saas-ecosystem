@@ -1,67 +1,84 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import DashboardLayout from './layouts/DashboardLayout';
-import SuperAdminLayout from './components/SuperAdminLayout';
-import Schools from './pages/Schools';
+import React, { Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+// Context
+import { TerminologyProvider } from './context/TerminologyContext';
+
+// Layouts (Ensure these files exist in src/components/Layouts/)
+import SuperAdminLayout from './components/Layouts/SuperAdminLayout';
+import SchoolLayout from './components/Layouts/SchoolLayout';
+import TeacherLayout from './components/Layouts/TeacherLayout';
+import StudentLayout from './components/Layouts/StudentLayout';
+
+// Pages (Ensure these exist in src/pages/)
 import LandingPage from './pages/LandingPage';
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import LoginPage from './pages/LoginPage';
+import UniversalLogin from './pages/UniversalLogin';
 
-// Dashboard Home Stats Component
-const HomeStats = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-semibold text-gray-800 mb-6">Dashboard Overview</h1>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <h3 className="text-gray-500 text-sm font-medium">Total Schools</h3>
-        <p className="text-3xl font-bold text-gray-800 mt-2">12</p>
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <h3 className="text-gray-500 text-sm font-medium">Active Students</h3>
-        <p className="text-3xl font-bold text-green-600 mt-2">1,240</p>
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <h3 className="text-gray-500 text-sm font-medium">Total Revenue</h3>
-        <p className="text-3xl font-bold text-blue-600 mt-2">₹ 4.5L</p>
-      </div>
-    </div>
+// Admin Pages
+import Dashboard from './pages/Dashboard';
+import ManageTenants from './pages/ManageTenants';
+
+// School Pages
+import SchoolDashboard from './pages/SchoolDashboard';
+import AdmissionForm from './pages/AdmissionForm';
+import SchoolStore from './pages/SchoolStore'; // Jo abhi banaya tha
+
+// Teacher Pages
+import TeacherDashboard from './pages/TeacherDashboard';
+import TeacherAttendance from './pages/TeacherAttendance';
+
+// Student Pages
+import StudentDashboard from './pages/StudentDashboard';
+import StudentFees from './pages/StudentFees';
+
+// Loading Component
+const Loading = () => (
+  <div className="h-screen flex items-center justify-center text-indigo-600 font-bold text-xl">
+    Loading...
   </div>
-);
-
-// Dashboard Layout Wrapper
-const DashboardWrapper = () => (
-  <DashboardLayout>
-    <Routes>
-      <Route path="/" element={<HomeStats />} />
-      <Route path="/schools" element={<Schools />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  </DashboardLayout>
 );
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        
-        {/* Login Routes */}
-        <Route path="/login/:role" element={<LoginPage />} />
-        
-        {/* Admin Dashboard Routes */}
-        <Route path="/admin/*" element={<DashboardWrapper />} />
-        
-        {/* Super Admin Routes */}
-        <Route path="/super-admin" element={<SuperAdminLayout />}>
-          <Route path="dashboard" element={<SuperAdminDashboard />} />
-          <Route index element={<Navigate to="dashboard" replace />} />
-        </Route>
-        
-        {/* Redirect any other route to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+    <TerminologyProvider>
+      <BrowserRouter>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            {/* --- PUBLIC ROUTES --- */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<UniversalLogin />} />
+
+            {/* --- SUPER ADMIN ROUTES --- */}
+            <Route path="/super-admin" element={<SuperAdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="tenants" element={<ManageTenants />} />
+            </Route>
+
+            {/* --- SCHOOL ADMIN ROUTES --- */}
+            <Route path="/school" element={<SchoolLayout />}>
+              <Route index element={<SchoolDashboard />} />
+              <Route path="admission" element={<AdmissionForm />} />
+              <Route path="store" element={<SchoolStore />} />
+            </Route>
+
+            {/* --- TEACHER APP ROUTES --- */}
+            <Route path="/teacher" element={<TeacherLayout />}>
+              <Route index element={<TeacherDashboard />} />
+              <Route path="attendance" element={<TeacherAttendance />} />
+            </Route>
+
+            {/* --- STUDENT APP ROUTES --- */}
+            <Route path="/student" element={<StudentLayout />}>
+              <Route index element={<StudentDashboard />} />
+              <Route path="fees" element={<StudentFees />} />
+            </Route>
+
+            {/* 404 Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </TerminologyProvider>
   );
 }
 

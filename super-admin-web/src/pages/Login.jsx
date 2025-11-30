@@ -1,96 +1,118 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setLoading(true);
 
-    const dummyEmail = 'admin@saas.com';
-    const dummyPassword = 'admin123';
-
-    if (email === dummyEmail && password === dummyPassword) {
-      // Simulate successful login
-      alert('Login Successful!');
-      navigate('/'); // Navigate to dashboard on success
-    } else {
-      setError('Invalid Credentials'); // Show error message on failure
-    }
+    // Simulation of login logic
+    setTimeout(() => {
+      setLoading(false);
+      // Logic to check role and redirect
+      // For demo purposes, redirecting to Dashboard
+      navigate('/');
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md dark:bg-slate-800 dark:border dark:border-slate-700">
-        <div className="flex justify-center mb-6">
-          {/* App Logo Placeholder */}
-          <img src="/vite.svg" alt="App Logo" className="h-16 w-16" />
-        </div>
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6 dark:text-gray-100">Super Admin Portal</h2>
+    <div className="min-h-screen w-full flex bg-gray-50">
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="sr-only">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-gray-100 dark:placeholder-gray-400"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+      {/* Left Side - Form Section */}
+      <div className="w-full lg:w-[40%] bg-white flex flex-col justify-center py-10 pl-10 pr-10 lg:pl-36 lg:pr-20 relative shadow-xl z-10">
+
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
+              S
+            </div>
+            <span className="text-xl font-bold text-gray-800">SchoolSaaS</span>
           </div>
+
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
+          <p className="text-gray-500">Please enter your details to sign in.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="password" className="sr-only">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
             <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
+                type="email"
+                placeholder="admin@school.com"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-gray-100 dark:placeholder-gray-400"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff className="h-5 w-5 text-gray-500 dark:text-gray-300" /> : <Eye className="h-5 w-5 text-gray-500 dark:text-gray-300" />}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center dark:text-red-400">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign In
-            </button>
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+              <span className="text-gray-600">Remember me</span>
+            </label>
+            <a href="#" className="text-indigo-600 font-medium hover:text-indigo-700">Forgot Password?</a>
           </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+            {!loading && <ArrowRight className="w-4 h-4" />}
+          </button>
         </form>
+
+        <p className="mt-8 text-center text-sm text-gray-500">
+          Don't have an account? <a href="#" className="text-indigo-600 font-medium hover:underline">Contact Support</a>
+        </p>
       </div>
+
+      {/* Right Side - Image/Pattern */}
+      <div className="hidden lg:flex w-[60%] bg-indigo-50 items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-indigo-600/10"></div>
+        <div className="text-center p-10 z-10">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">Manage your Institution Smartly</h2>
+          <p className="text-gray-600 max-w-md mx-auto">
+            The complete ecosystem for Schools, Coachings, Teachers, and Students.
+          </p>
+        </div>
+      </div>
+
     </div>
   );
-};
+}; // <--- YAHAN FUNCTION CLOSE HONA ZARURI HAI
 
 export default Login;
